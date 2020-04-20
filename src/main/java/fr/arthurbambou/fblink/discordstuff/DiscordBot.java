@@ -2,9 +2,9 @@ package fr.arthurbambou.fblink.discordstuff;
 
 import com.vdurmont.emoji.EmojiParser;
 import fr.arthurbambou.fblink.FBLink;
-import net.fabricmc.fabric.api.event.server.ServerStartCallback;
-import net.fabricmc.fabric.api.event.server.ServerStopCallback;
-import net.fabricmc.fabric.api.event.server.ServerTickCallback;
+// import net.fabricmc.fabric.api.event.server.ServerStartCallback;
+// import net.fabricmc.fabric.api.event.server.ServerStopCallback;
+// import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.*;
 import net.minecraft.util.Util;
@@ -77,80 +77,80 @@ public class DiscordBot {
         if (this.config.minecraftToDiscord.booleans.serverStartingMessage) sendToAllChannels(this.config.minecraftToDiscord.messages.serverStarting);
 
         if (this.config.minecraftToDiscord.booleans.serverStartMessage) {
-            ServerStartCallback.EVENT.register((server -> {
-                startTime = server.getServerStartTime();
-                sendToAllChannels(this.config.minecraftToDiscord.messages.serverStarted);
-            }));
+            // ServerStartCallback.EVENT.register((server -> {
+            //     startTime = server.getServerStartTime();
+            //     sendToAllChannels(this.config.minecraftToDiscord.messages.serverStarted);
+            // }));
         }
         if (this.config.minecraftToDiscord.booleans.serverStopMessage) {
-            ServerStopCallback.EVENT.register((server -> {
-                sendToAllChannels(config.minecraftToDiscord.messages.serverStopped);
-                this.api.disconnect();
-                this.api = null;
-            }));
+            // ServerStopCallback.EVENT.register((server -> {
+            //     sendToAllChannels(config.minecraftToDiscord.messages.serverStopped);
+            //     this.api.disconnect();
+            //     this.api = null;
+            // }));
         }
 
-        ServerTickCallback.EVENT.register((server -> {
-            this.ticks++;
-            int playerNumber = server.getPlayerManager().getPlayerList().size();
-            int maxPlayer = server.getPlayerManager().getMaxPlayerCount();
-            if (this.hasReceivedMessage) {
-                if (this.messageCreateEvent.getMessageContent().startsWith("!playerlist")) {
-                    StringBuilder playerlist = new StringBuilder();
-                    for (PlayerEntity playerEntity : server.getPlayerManager().getPlayerList()) {
-                        playerlist.append(playerEntity.getName().getString()).append("\n");
-                    }
-                    if (playerlist.toString().endsWith("\n")) {
-                        int a = playerlist.lastIndexOf("\n");
-                        playerlist = new StringBuilder(playerlist.substring(0, a));
-                    }
-                    this.messageCreateEvent.getChannel().sendMessage("Players : " + server.getPlayerManager().getPlayerList().size() + "/" + server.getPlayerManager().getMaxPlayerCount() + "\n\n" + playerlist);
-                }
-                this.lastMessageD = this.config.discordToMinecraft
-                        .replace("%player", this.messageCreateEvent.getMessageAuthor().getDisplayName());
-                String string_message = EmojiParser.parseToAliases(this.messageCreateEvent.getMessageContent());
-                if (this.config.minecraftToDiscord.booleans.minecraftToDiscordTag) {
-                    for (User user : this.api.getCachedUsers()) {
-                        ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
-                        Server discordServer = serverChannel.getServer();
-                        String string_discriminator = "";
-                        if(this.config.minecraftToDiscord.booleans.minecraftToDiscordDiscriminator){
-                            string_discriminator = "#" + user.getDiscriminator();
-                        }
-                        string_message = string_message.replace("<@!" + user.getIdAsString() + ">", "@" + user.getName() + string_discriminator);
-                        if (user.getNickname(discordServer).isPresent()) {
-                            string_message = string_message.replace("@" + user.getName(), "@" + user.getDisplayName(discordServer) + "(" + user.getName() + string_discriminator + ")");
-                        }
-                    }
-                }
-                Style style = new Style();
-                if (!this.messageCreateEvent.getMessageAttachments().isEmpty()) {
-                    this.lastMessageD = this.lastMessageD.replace("%message", string_message + " (Click to open attachment URL)");
-                    style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, this.messageCreateEvent.getMessageAttachments().get(0).getUrl().toString()));
-                } else {
-                    this.lastMessageD = this.lastMessageD.replace("%message", string_message);
-                }
-                server.getPlayerManager().sendToAll(new LiteralText(this.lastMessageD).setStyle(style));
+        // ServerTickCallback.EVENT.register((server -> {
+        //     this.ticks++;
+        //     int playerNumber = server.getPlayerManager().getPlayerList().size();
+        //     int maxPlayer = server.getPlayerManager().getMaxPlayerCount();
+        //     if (this.hasReceivedMessage) {
+        //         if (this.messageCreateEvent.getMessageContent().startsWith("!playerlist")) {
+        //             StringBuilder playerlist = new StringBuilder();
+        //             for (PlayerEntity playerEntity : server.getPlayerManager().getPlayerList()) {
+        //                 playerlist.append(playerEntity.getName().getString()).append("\n");
+        //             }
+        //             if (playerlist.toString().endsWith("\n")) {
+        //                 int a = playerlist.lastIndexOf("\n");
+        //                 playerlist = new StringBuilder(playerlist.substring(0, a));
+        //             }
+        //             this.messageCreateEvent.getChannel().sendMessage("Players : " + server.getPlayerManager().getPlayerList().size() + "/" + server.getPlayerManager().getMaxPlayerCount() + "\n\n" + playerlist);
+        //         }
+        //         this.lastMessageD = this.config.discordToMinecraft
+        //                 .replace("%player", this.messageCreateEvent.getMessageAuthor().getDisplayName());
+        //         String string_message = EmojiParser.parseToAliases(this.messageCreateEvent.getMessageContent());
+        //         if (this.config.minecraftToDiscord.booleans.minecraftToDiscordTag) {
+        //             for (User user : this.api.getCachedUsers()) {
+        //                 ServerChannel serverChannel = (ServerChannel) this.api.getServerChannels().toArray()[0];
+        //                 Server discordServer = serverChannel.getServer();
+        //                 String string_discriminator = "";
+        //                 if(this.config.minecraftToDiscord.booleans.minecraftToDiscordDiscriminator){
+        //                     string_discriminator = "#" + user.getDiscriminator();
+        //                 }
+        //                 string_message = string_message.replace("<@!" + user.getIdAsString() + ">", "@" + user.getName() + string_discriminator);
+        //                 if (user.getNickname(discordServer).isPresent()) {
+        //                     string_message = string_message.replace("@" + user.getName(), "@" + user.getDisplayName(discordServer) + "(" + user.getName() + string_discriminator + ")");
+        //                 }
+        //             }
+        //         }
+        //         Style style = new Style();
+        //         if (!this.messageCreateEvent.getMessageAttachments().isEmpty()) {
+        //             this.lastMessageD = this.lastMessageD.replace("%message", string_message + " (Click to open attachment URL)");
+        //             style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, this.messageCreateEvent.getMessageAttachments().get(0).getUrl().toString()));
+        //         } else {
+        //             this.lastMessageD = this.lastMessageD.replace("%message", string_message);
+        //         }
+        //         server.getPlayerManager().sendToAll(new LiteralText(this.lastMessageD).setStyle(style));
 
-                this.hasReceivedMessage = false;
-            }
-            if (this.hasChatChannels && this.config.minecraftToDiscord.booleans.customChannelDescription && this.ticks >= 200) {
-                this.ticks = 0;
-                int totalUptimeSeconds = (int) (Util.getMeasuringTimeMs() - this.startTime) / 1000;
-                final int uptimeH = totalUptimeSeconds / 3600 ;
-                final int uptimeM = (totalUptimeSeconds % 3600) / 60;
-                final int uptimeS = totalUptimeSeconds % 60;
+        //         this.hasReceivedMessage = false;
+        //     }
+        //     if (this.hasChatChannels && this.config.minecraftToDiscord.booleans.customChannelDescription && this.ticks >= 200) {
+        //         this.ticks = 0;
+        //         int totalUptimeSeconds = (int) (Util.getMeasuringTimeMs() - this.startTime) / 1000;
+        //         final int uptimeH = totalUptimeSeconds / 3600 ;
+        //         final int uptimeM = (totalUptimeSeconds % 3600) / 60;
+        //         final int uptimeS = totalUptimeSeconds % 60;
 
-                for (String id : this.config.chatChannels) {
-                    this.api.getServerTextChannelById(id).ifPresent(channel ->
-                            channel.updateTopic(String.format(
-                            "player count : %d/%d,\n" +
-                                    "uptime : %d h %d min %d second",
-                            playerNumber, maxPlayer, uptimeH, uptimeM, uptimeS
-                    )));
-                }
-            }
-        }));
+        //         for (String id : this.config.chatChannels) {
+        //             this.api.getServerTextChannelById(id).ifPresent(channel ->
+        //                     channel.updateTopic(String.format(
+        //                     "player count : %d/%d,\n" +
+        //                             "uptime : %d h %d min %d second",
+        //                     playerNumber, maxPlayer, uptimeH, uptimeM, uptimeS
+        //             )));
+        //         }
+        //     }
+        // }));
     }
 
     public void sendMessage(Text text) {
