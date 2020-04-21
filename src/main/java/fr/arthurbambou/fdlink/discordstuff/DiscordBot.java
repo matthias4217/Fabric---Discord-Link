@@ -1,15 +1,13 @@
-package fr.arthurbambou.fblink.discordstuff;
+package fr.arthurbambou.fdlink.discordstuff;
 
 import com.vdurmont.emoji.EmojiParser;
-import fr.arthurbambou.fblink.FBLink;
+import fr.arthurbambou.fdlink.FDLink;
 // import net.fabricmc.fabric.api.event.server.ServerStartCallback;
 // import net.fabricmc.fabric.api.event.server.ServerStopCallback;
 // import net.fabricmc.fabric.api.event.server.ServerTickCallback;
 import net.minecraft.class_1637;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.*;
-import net.minecraft.util.Util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.javacord.api.DiscordApi;
@@ -23,7 +21,7 @@ import org.javacord.api.listener.message.MessageCreateListener;
 public class DiscordBot {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private FBLink.Config config;
+    private FDLink.Config config;
     private boolean hasChatChannels;
     private boolean hasLogChannels;
     private MessageCreateEvent messageCreateEvent;
@@ -33,11 +31,11 @@ public class DiscordBot {
     private long startTime;
     private int ticks;
 
-    public DiscordBot(String token, FBLink.Config config) {
+    public DiscordBot(String token, FDLink.Config config) {
         this.ticks = 0;
         this.lastMessageD = "";
         if (token == null) {
-            FBLink.regenConfig();
+            FDLink.regenConfig();
             return;
         }
 
@@ -100,8 +98,8 @@ public class DiscordBot {
 //                this.ticks++;
                  int playerNumber = server.getPlayerManager().method_6248().size();
                  int maxPlayer = server.getPlayerManager().getMaxPlayerCount();
-                 if (FBLink.getDiscordBot().hasReceivedMessage) {
-                     if (FBLink.getDiscordBot().messageCreateEvent.getMessageContent().startsWith("!playerlist")) {
+                 if (FDLink.getDiscordBot().hasReceivedMessage) {
+                     if (FDLink.getDiscordBot().messageCreateEvent.getMessageContent().startsWith("!playerlist")) {
                          StringBuilder playerlist = new StringBuilder();
                          for (class_1637 playerEntity : server.getPlayerManager().method_6248()) {
                              playerlist.append(playerEntity.getGameProfile().getName()).append("\n");
@@ -110,17 +108,17 @@ public class DiscordBot {
                              int a = playerlist.lastIndexOf("\n");
                              playerlist = new StringBuilder(playerlist.substring(0, a));
                          }
-                         FBLink.getDiscordBot().messageCreateEvent.getChannel().sendMessage("Players : " + server.getPlayerManager().method_6248().size() + "/" + server.getPlayerManager().getMaxPlayerCount() + "\n\n" + playerlist);
+                         FDLink.getDiscordBot().messageCreateEvent.getChannel().sendMessage("Players : " + server.getPlayerManager().method_6248().size() + "/" + server.getPlayerManager().getMaxPlayerCount() + "\n\n" + playerlist);
                      }
-                     FBLink.getDiscordBot().lastMessageD = FBLink.getDiscordBot().config.discordToMinecraft
-                             .replace("%player", FBLink.getDiscordBot().messageCreateEvent.getMessageAuthor().getDisplayName());
-                     String string_message = EmojiParser.parseToAliases(FBLink.getDiscordBot().messageCreateEvent.getMessageContent());
-                     if (FBLink.getDiscordBot().config.minecraftToDiscord.booleans.minecraftToDiscordTag) {
-                         for (User user : FBLink.getDiscordBot().api.getCachedUsers()) {
-                             ServerChannel serverChannel = (ServerChannel) FBLink.getDiscordBot().api.getServerChannels().toArray()[0];
+                     FDLink.getDiscordBot().lastMessageD = FDLink.getDiscordBot().config.discordToMinecraft
+                             .replace("%player", FDLink.getDiscordBot().messageCreateEvent.getMessageAuthor().getDisplayName());
+                     String string_message = EmojiParser.parseToAliases(FDLink.getDiscordBot().messageCreateEvent.getMessageContent());
+                     if (FDLink.getDiscordBot().config.minecraftToDiscord.booleans.minecraftToDiscordTag) {
+                         for (User user : FDLink.getDiscordBot().api.getCachedUsers()) {
+                             ServerChannel serverChannel = (ServerChannel) FDLink.getDiscordBot().api.getServerChannels().toArray()[0];
                              Server discordServer = serverChannel.getServer();
                              String string_discriminator = "";
-                             if(FBLink.getDiscordBot().config.minecraftToDiscord.booleans.minecraftToDiscordDiscriminator){
+                             if(FDLink.getDiscordBot().config.minecraftToDiscord.booleans.minecraftToDiscordDiscriminator){
                                  string_discriminator = "#" + user.getDiscriminator();
                              }
                              string_message = string_message.replace("<@!" + user.getIdAsString() + ">", "@" + user.getName() + string_discriminator);
@@ -130,17 +128,17 @@ public class DiscordBot {
                          }
                      }
                      Style style = new Style();
-                     if (!FBLink.getDiscordBot().messageCreateEvent.getMessageAttachments().isEmpty()) {
-                         FBLink.getDiscordBot().lastMessageD = FBLink.getDiscordBot().lastMessageD.replace("%message", string_message + " (Click to open attachment URL)");
-                         style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, FBLink.getDiscordBot().messageCreateEvent.getMessageAttachments().get(0).getUrl().toString()));
+                     if (!FDLink.getDiscordBot().messageCreateEvent.getMessageAttachments().isEmpty()) {
+                         FDLink.getDiscordBot().lastMessageD = FDLink.getDiscordBot().lastMessageD.replace("%message", string_message + " (Click to open attachment URL)");
+                         style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, FDLink.getDiscordBot().messageCreateEvent.getMessageAttachments().get(0).getUrl().toString()));
                      } else {
-                         FBLink.getDiscordBot().lastMessageD = FBLink.getDiscordBot().lastMessageD.replace("%message", string_message);
+                         FDLink.getDiscordBot().lastMessageD = FDLink.getDiscordBot().lastMessageD.replace("%message", string_message);
                      }
-                     server.getPlayerManager().sendToAll(new LiteralText(FBLink.getDiscordBot().lastMessageD).setStyle(style));
+                     server.getPlayerManager().sendToAll(new LiteralText(FDLink.getDiscordBot().lastMessageD).setStyle(style));
 
-                     FBLink.getDiscordBot().hasReceivedMessage = false;
+                     FDLink.getDiscordBot().hasReceivedMessage = false;
                  }
-                 if (FBLink.getDiscordBot().hasChatChannels && FBLink.getDiscordBot().config.minecraftToDiscord.booleans.customChannelDescription && FBLink.getDiscordBot().ticks >= 200) {
+                 if (FDLink.getDiscordBot().hasChatChannels && FDLink.getDiscordBot().config.minecraftToDiscord.booleans.customChannelDescription && FDLink.getDiscordBot().ticks >= 200) {
 //                     FBLink.getDiscordBot().ticks = 0;
 //                     int totalUptimeSeconds = (int) (Util.getMeasuringTimeMs() - this.startTime) / 1000;
 //                     final int uptimeH = totalUptimeSeconds / 3600 ;
